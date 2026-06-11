@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>育儿执行手册</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  
+  :root {
+    --purple: #534AB7;
+    --purple-light: #EEEDFE;
+    --purple-dark: #3C3489;
+    --blue: #185FA5;
+    --blue-light: #E6F1FB;
+    --green: #3B6D11;
+    --green-light: #EAF3DE;
+    --red: #A32D2D;
+    --red-light: #FCEBEB;
+    --amber: #854F0B;
+    --amber-light: #FAEEDA;
+    --text: #1a1a1a;
+    --text-sec: #666;
+    --border: #e5e5e5;
+    --bg: #f7f7f7;
+    --card: #ffffff;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.6;
+    max-width: 480px;
+    margin: 0 auto;
+    padding-bottom: 80px;
+  }
+
+  /* NAV TABS - bottom fixed */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    max-width: 480px;
+    margin: 0 auto;
+    background: #fff;
+    border-top: 1px solid var(--border);
+    display: flex;
+    z-index: 100;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .nav-btn {
+    flex: 1;
+    padding: 12px 4px 10px;
+    text-align: center;
+    border: none;
+    background: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    color: #999;
+    font-size: 11px;
+  }
+  .nav-btn .icon { font-size: 22px; }
+  .nav-btn.active { color: var(--purple); }
+  .nav-btn.active .icon { transform: scale(1.1); }
+
+  /* PAGES */
+  .page { display: none; padding: 16px; }
+  .page.active { display: block; }
+
+  /* ANCHOR BANNER */
+  .anchor {
+    background: var(--purple);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .anchor-quote {
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.5;
+    margin-bottom: 6px;
+  }
+  .anchor-sub { font-size: 13px; color: rgba(255,255,255,0.7); }
+
+  /* STEP CARDS */
+  .step-card {
+    background: var(--card);
+    border-radius: 16px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    cursor: pointer;
+    user-select: none;
+    min-height: 64px;
+  }
+  .step-num {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .step-info { flex: 1; }
+  .step-title { font-size: 17px; font-weight: 600; }
+  .step-hint { font-size: 13px; color: var(--text-sec); margin-top: 2px; }
+  .step-arrow { font-size: 18px; color: #ccc; transition: transform 0.25s; }
+  .step-card.open .step-arrow { transform: rotate(90deg); }
+
+  .step-body {
+    display: none;
+    padding: 0 16px 16px;
+    border-top: 1px solid var(--border);
+    padding-top: 14px;
+  }
+  .step-card.open .step-body { display: block; }
+
+  .tag-do {
+    background: var(--green-light);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+  .tag-do .label { font-size: 12px; font-weight: 600; color: var(--green); margin-bottom: 6px; }
+  .tag-do .item { font-size: 14px; color: #27500A; margin-bottom: 4px; line-height: 1.5; }
+
+  .tag-dont {
+    background: var(--red-light);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+  .tag-dont .label { font-size: 12px; font-weight: 600; color: var(--red); margin-bottom: 6px; }
+  .tag-dont .item { font-size: 14px; color: #791F1F; margin-bottom: 4px; line-height: 1.5; }
+
+  .example {
+    background: #f9f9f9;
+    border-left: 3px solid var(--purple);
+    border-radius: 0 10px 10px 0;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+  }
+  .example .label { font-size: 11px; color: var(--text-sec); margin-bottom: 4px; font-weight: 600; letter-spacing: 0.3px; }
+  .example .text { font-size: 14px; color: var(--text); line-height: 1.6; }
+
+  /* SCRIPTS PAGE */
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .pill {
+    background: var(--purple-light);
+    color: var(--purple-dark);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 20px;
+  }
+
+  .script-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .script-phase {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-sec);
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  .bubble {
+    border-radius: 14px;
+    padding: 10px 14px;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 6px;
+  }
+  .bubble.p { background: var(--blue-light); color: #0c447c; }
+  .bubble.c { background: var(--amber-light); color: #633806; }
+  .note {
+    font-size: 12px;
+    color: var(--text-sec);
+    font-style: italic;
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  .timeline {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+  .timeline-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .timeline-row:last-child { border-bottom: none; }
+  .t-badge {
+    background: var(--purple);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .t-text { font-size: 14px; color: var(--text); line-height: 1.6; }
+
+  /* SCENARIOS PAGE */
+  .scenario-btn {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    text-align: left;
+    cursor: pointer;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .scenario-btn .emoji { font-size: 22px; margin-right: 10px; }
+  .s-title { font-size: 16px; font-weight: 600; color: var(--text); }
+  .s-sub { font-size: 13px; color: var(--text-sec); margin-top: 2px; }
+  .s-arrow { font-size: 18px; color: #ccc; transition: transform 0.25s; }
+  .scenario-btn.open .s-arrow { transform: rotate(90deg); }
+  
+  .scenario-body {
+    display: none;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-top: -6px;
+    margin-bottom: 10px;
+  }
+  .scenario-body.open { display: block; }
+  .d-who { font-size: 12px; font-weight: 600; letter-spacing: 0.3px; margin: 10px 0 4px; }
+  .d-who.p { color: var(--blue); }
+  .d-who.c { color: #993C1D; }
+  .divider {
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-sec);
+    padding: 8px 0;
+    border-top: 1px dashed var(--border);
+    border-bottom: 1px dashed var(--border);
+    margin: 10px 0;
+  }
+  .tip {
+    background: var(--purple-light);
+    color: var(--purple-dark);
+    font-size: 13px;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+  .tip-green {
+    background: var(--green-light);
+    color: var(--green);
+    font-size: 13px;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+
+  .section-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-sec);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin: 20px 0 10px;
+  }
+</style>
+</head>
+<body>
+
+<!-- PAGE 1: 四步流程 -->
+<div id="page-steps" class="page active">
+  <div class="anchor">
+    <div class="anchor-quote">「我不是在说服他，<br>我是在维持系统。」</div>
+    <div class="anchor-sub">冲突前记住这一句</div>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="step-card" id="s1">
+    <div class="step-header" onclick="toggleStep('s1')">
+      <div class="step-num" style="background:#E6F1FB; color:#185FA5;">①</div>
+      <div class="step-info">
+        <div class="step-title">给规则</div>
+        <div class="step-hint">简短 · 清晰 · 只说一次</div>
+      </div>
+      <span class="step-arrow">›</span>
+    </div>
+    <div class="step-body">
+      <div class="tag-do">
+        <div class="label">✔ 正确示范</div>
+        <div class="item">·「这道题步骤必须写完整，不写步骤不算完成。」</div>
+        <div class="item">·「lesson结束后，你来回答我2个问题。」</div>
+        <div class="item">·「8:30之前把第一段背给我听。」</div>
+      </div>
+      <div class="tag-dont">
+        <div class="label">✗ 禁止</div>
+        <div class="item">· 超过3句话的长篇讲道理</div>
+        <div class="item">· 叹气、皱眉、提高音量</div>
+        <div class="item">·「上次你也是这样……」翻旧账</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step-card" id="s2">
+    <div class="step-header" onclick="toggleStep('s2')">
+      <div class="step-num" style="background:#EAF3DE; color:#3B6D11;">②</div>
+      <div class="step-info">
+        <div class="step-title">给时间</div>
+        <div class="step-hint">具体时间点，不是「快点」</div>
+      </div>
+      <span class="step-arrow">›</span>
+    </div>
+    <div class="step-body">
+      <div class="example">
+        <div class="label">标准句式</div>
+        <div class="text">「现在7:50，8:10之前完成。」<br>「你有20分钟，8:30截止。」</div>
+      </div>
+      <div class="tag-dont">
+        <div class="label">✗ 说完后立刻做到</div>
+        <div class="item">· 停止提醒</div>
+        <div class="item">· 离开，去做别的事</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step-card" id="s3">
+    <div class="step-header" onclick="toggleStep('s3')">
+      <div class="step-num" style="background:#FAEEDA; color:#854F0B;">③</div>
+      <div class="step-info">
+        <div class="step-title">给后果</div>
+        <div class="step-hint">真实可执行，不是吓唬</div>
+      </div>
+      <span class="step-arrow">›</span>
+    </div>
+    <div class="step-body">
+      <div class="example">
+        <div class="label">不写数学步骤</div>
+        <div class="text">「这题不算完成，今天数学任务没达标。」</div>
+      </div>
+      <div class="example">
+        <div class="label">不回答英语问题</div>
+        <div class="text">「今天不进入下一个lesson，明天补上。」</div>
+      </div>
+      <div class="example">
+        <div class="label">背诵没准备好</div>
+        <div class="text">「好的，那明天自己面对老师抽查。」</div>
+      </div>
+      <div class="example">
+        <div class="label">时间到了还没做</div>
+        <div class="text">「今晚自由时间减少30分钟，明天重新做。」</div>
+      </div>
+      <div class="example">
+        <div class="label">完全拒绝执行</div>
+        <div class="text">「我不跟你争，后果是……我们明天再谈。」</div>
+      </div>
+      <div class="tag-dont">
+        <div class="label">✗ 后果说完后禁止</div>
+        <div class="item">· 补充「你看你就是……」</div>
+        <div class="item">· 任何追加教育</div>
+        <div class="item">· 说完就走，让后果自己说话</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step-card" id="s4">
+    <div class="step-header" onclick="toggleStep('s4')">
+      <div class="step-num" style="background:#FBEAF0; color:#993556;">④</div>
+      <div class="step-info">
+        <div class="step-title">退出情绪</div>
+        <div class="step-hint">核心动作 — 真正离开</div>
+      </div>
+      <span class="step-arrow">›</span>
+    </div>
+    <div class="step-body">
+      <div class="tag-do">
+        <div class="label">✔ 去做这些</div>
+        <div class="item">· 看书、做家务、休息</div>
+        <div class="item">· 不站在旁边盯</div>
+        <div class="item">· 不再输出任何教育语言</div>
+      </div>
+      <div class="tag-dont">
+        <div class="label">✗ 绝对不要</div>
+        <div class="item">· 连续提醒</div>
+        <div class="item">· 情绪跟随（孩子叹气你也叹气）</div>
+        <div class="item">· 说「最后一句话」</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 2: 冲突脚本 -->
+<div id="page-scripts" class="page">
+  <div class="anchor">
+    <div class="anchor-quote">「我不赢每一次对抗，<br>我只保证规则不消失。」</div>
+  </div>
+
+  <div class="section-label">四句核心口诀</div>
+  <div class="pills">
+    <span class="pill">规则只说一次</span>
+    <span class="pill">对抗只重复规则</span>
+    <span class="pill">不升级情绪</span>
+    <span class="pill">后果自然发生</span>
+  </div>
+
+  <div class="section-label">分阶段原话</div>
+
+  <div class="script-block">
+    <div class="script-phase">第一句 · 给规则（只说一次）</div>
+    <div class="bubble p">「我们按规则来：现在开始做这一步。」</div>
+    <div class="bubble p">「规则是这一题要写步骤。」</div>
+    <div class="note">说完停止。不解释，不加内容。</div>
+  </div>
+
+  <div class="script-block">
+    <div class="script-phase">孩子顶嘴 · 卡住阶段（重复同一句）</div>
+    <div class="bubble c">孩子：「我不想做 / 太烦了 / 我已经会了」</div>
+    <div class="bubble p">你：「规则是这一题要写步骤。」</div>
+    <div class="note">无论孩子说什么，你只重复这一句，原文不变。<br>禁止：讲道理、比较、解释未来、提旧问题。</div>
+  </div>
+
+  <div class="script-block">
+    <div class="script-phase">继续对抗 · 刹车点（最关键）</div>
+    <div class="bubble p">「你可以慢慢做，但这条规则不会变。」</div>
+    <div class="note">说完转身离开。不等回应，不看反应。</div>
+  </div>
+
+  <div class="script-block">
+    <div class="script-phase">完全不做 · 执行后果</div>
+    <div class="bubble p">「这题不算完成，今天数学任务没达标。」</div>
+    <div class="bubble p">「今天这一部分到这里结束。」</div>
+    <div class="bubble p">「明天继续这一题。」</div>
+    <div class="note">说一句，结束，走人。不延长冲突。</div>
+  </div>
+
+  <div class="section-label">规则稳定的时间线</div>
+  <div class="timeline">
+    <div class="timeline-row">
+      <div class="t-badge">第1–2周</div>
+      <div class="t-text">试探增多。正常——他在测试规则是否稳定，你只需保持不变。</div>
+    </div>
+    <div class="timeline-row">
+      <div class="t-badge">第3–6周</div>
+      <div class="t-text">试探减少。他开始接受规则不会被拉扯，对抗频率自然下降。</div>
+    </div>
+    <div class="timeline-row">
+      <div class="t-badge">2–3个月</div>
+      <div class="t-text">开始适应。不是变乖了，是建立了预期——他知道规则会在。</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 3: 场景对话 -->
+<div id="page-scenes" class="page">
+  <div class="section-label" style="margin-top:0">点击展开完整对话示范</div>
+
+  <button class="scenario-btn" id="sc1" onclick="toggleScene('sc1')">
+    <div style="display:flex; align-items:center;">
+      <span class="emoji">📐</span>
+      <div>
+        <div class="s-title">数学不写步骤</div>
+        <div class="s-sub">四步完整流程示范</div>
+      </div>
+    </div>
+    <span class="s-arrow">›</span>
+  </button>
+  <div class="scenario-body" id="sc1-body">
+    <div class="d-who p">家长（给规则）</div>
+    <div class="bubble p">「这道题步骤必须写完整，只写答案不算完成。」</div>
+    <div class="d-who p">家长（给时间）</div>
+    <div class="bubble p">「现在8:00，8:20之前完成。」</div>
+    <div class="divider">— 家长离开，去做自己的事 —</div>
+    <div class="d-who c">孩子</div>
+    <div class="bubble c">「我不想写步骤，没意义。」</div>
+    <div class="d-who p">家长（平静执行后果）</div>
+    <div class="bubble p">「好的，那这题不算完成，今天数学任务没达标。」</div>
+    <div class="tip">说完后果，结束，走人。<br>不追加「你看你就是……」</div>
+  </div>
+
+  <button class="scenario-btn" id="sc2" onclick="toggleScene('sc2')">
+    <div style="display:flex; align-items:center;">
+      <span class="emoji">📖</span>
+      <div>
+        <div class="s-title">英语不回答问题</div>
+        <div class="s-sub">含正向反馈示范</div>
+      </div>
+    </div>
+    <span class="s-arrow">›</span>
+  </button>
+  <div class="scenario-body" id="sc2-body">
+    <div class="d-who p">家长</div>
+    <div class="bubble p">「Lesson结束后，你来回答我2个问题。现在8:15，8:30之前完成。」</div>
+    <div class="divider">— 家长离开 —</div>
+    <div class="d-who p">孩子完成后，家长</div>
+    <div class="bubble p">「好，说说你读到了什么？」</div>
+    <div class="d-who c">孩子回答后</div>
+    <div class="d-who p">家长（正向反馈）</div>
+    <div class="bubble p">「嗯，记住了。明天继续。」</div>
+    <div class="tip-green">简短认可，不夸大，不扩展。</div>
+  </div>
+
+  <button class="scenario-btn" id="sc3" onclick="toggleScene('sc3')">
+    <div style="display:flex; align-items:center;">
+      <span class="emoji">🔁</span>
+      <div>
+        <div class="s-title">孩子持续对抗</div>
+        <div class="s-sub">三轮顶嘴完整应对</div>
+      </div>
+    </div>
+    <span class="s-arrow">›</span>
+  </button>
+  <div class="scenario-body" id="sc3-body">
+    <div class="d-who p">家长</div>
+    <div class="bubble p">「规则是这一题要写步骤。」</div>
+    <div class="d-who c">孩子</div>
+    <div class="bubble c">「我不想做。」</div>
+    <div class="d-who p">家长（重复，原文不变）</div>
+    <div class="bubble p">「规则是这一题要写步骤。」</div>
+    <div class="d-who c">孩子</div>
+    <div class="bubble c">「太烦了！」</div>
+    <div class="d-who p">家长（重复，原文不变）</div>
+    <div class="bubble p">「规则是这一题要写步骤。」</div>
+    <div class="d-who c">孩子</div>
+    <div class="bubble c">「我已经会了！」</div>
+    <div class="d-who p">家长（刹车点）</div>
+    <div class="bubble p">「你可以慢慢做，但这条规则不会变。」</div>
+    <div class="divider">— 转身离开，不等回应 —</div>
+    <div class="tip">不争输赢，规则本身就是答案。</div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" id="nav-steps" onclick="switchPage('steps')">
+    <span class="icon">📋</span>
+    <span>四步流程</span>
+  </button>
+  <button class="nav-btn" id="nav-scripts" onclick="switchPage('scripts')">
+    <span class="icon">💬</span>
+    <span>冲突脚本</span>
+  </button>
+  <button class="nav-btn" id="nav-scenes" onclick="switchPage('scenes')">
+    <span class="icon">🎬</span>
+    <span>场景对话</span>
+  </button>
+</nav>
+
+<script>
+function switchPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.getElementById('nav-' + id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function toggleStep(id) {
+  const card = document.getElementById(id);
+  card.classList.toggle('open');
+}
+
+function toggleScene(id) {
+  const btn = document.getElementById(id);
+  const body = document.getElementById(id + '-body');
+  btn.classList.toggle('open');
+  body.classList.toggle('open');
+}
+</script>
+</body>
+</html>
