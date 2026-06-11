@@ -1,0 +1,375 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+.tabs { display: flex; border-bottom: 0.5px solid var(--color-border-tertiary); position: sticky; top: 0; background: var(--color-background-primary); z-index: 10; }
+.tab { flex: 1; padding: 12px 4px; font-size: 13px; text-align: center; color: var(--color-text-secondary); cursor: pointer; border: none; background: none; border-bottom: 2px solid transparent; transition: all 0.2s; }
+.tab.active { color: var(--color-text-primary); border-bottom: 2px solid #7F77DD; font-weight: 500; }
+.page { display: none; padding: 16px; }
+.page.active { display: block; }
+.step-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); margin-bottom: 12px; overflow: hidden; }
+.step-header { display: flex; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer; }
+.step-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 500; flex-shrink: 0; }
+.step-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); flex: 1; }
+.step-sub { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+.chevron { font-size: 16px; color: var(--color-text-tertiary); transition: transform 0.2s; }
+.step-body { padding: 0 16px 14px; display: none; }
+.step-body.open { display: block; }
+.step-body.open + .step-header .chevron { transform: rotate(180deg); }
+.do { background: #EAF3DE; border-radius: var(--border-radius-md); padding: 10px 12px; margin: 8px 0; }
+.do .label { font-size: 11px; font-weight: 500; color: #3B6D11; margin-bottom: 4px; letter-spacing: 0.3px; }
+.do .item { font-size: 13px; color: #27500A; margin-bottom: 3px; display: flex; align-items: flex-start; gap: 6px; }
+.dont { background: #FCEBEB; border-radius: var(--border-radius-md); padding: 10px 12px; margin: 8px 0; }
+.dont .label { font-size: 11px; font-weight: 500; color: #A32D2D; margin-bottom: 4px; letter-spacing: 0.3px; }
+.dont .item { font-size: 13px; color: #791F1F; margin-bottom: 3px; display: flex; align-items: flex-start; gap: 6px; }
+.example-box { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px 12px; margin: 8px 0; font-size: 13px; color: var(--color-text-primary); line-height: 1.6; }
+.example-box .label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 5px; font-weight: 500; letter-spacing: 0.3px; }
+.anchor-card { background: #EEEDFE; border-radius: var(--border-radius-lg); padding: 16px; margin-bottom: 16px; text-align: center; }
+.anchor-text { font-size: 16px; font-weight: 500; color: #3C3489; line-height: 1.5; }
+.anchor-sub { font-size: 12px; color: #534AB7; margin-top: 6px; }
+.script-item { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 12px 14px; margin-bottom: 10px; }
+.script-phase { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 6px; letter-spacing: 0.3px; }
+.script-text { font-size: 14px; color: var(--color-text-primary); line-height: 1.6; }
+.script-note { font-size: 12px; color: var(--color-text-secondary); margin-top: 6px; font-style: italic; }
+.scenario-btn { width: 100%; text-align: left; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 12px 14px; background: var(--color-background-primary); cursor: pointer; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
+.scenario-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+.scenario-body { display: none; background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px 14px; margin-bottom: 8px; margin-top: -4px; }
+.scenario-body.open { display: block; }
+.dialogue { margin-bottom: 8px; }
+.who { font-size: 11px; font-weight: 500; letter-spacing: 0.3px; margin-bottom: 3px; }
+.who.parent { color: #185FA5; }
+.who.child { color: #993C1D; }
+.speech { font-size: 13px; color: var(--color-text-primary); line-height: 1.6; padding: 8px 10px; border-radius: var(--border-radius-md); }
+.speech.parent-s { background: #E6F1FB; }
+.speech.child-s { background: #FAECE7; }
+.rule-pill { display: inline-block; background: #EEEDFE; color: #3C3489; font-size: 12px; font-weight: 500; padding: 4px 10px; border-radius: 20px; margin: 3px; }
+.progress-section { background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 14px; margin-bottom: 12px; }
+.week-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+.week-badge { background: #534AB7; color: #EEEDFE; font-size: 11px; font-weight: 500; padding: 4px 8px; border-radius: var(--border-radius-md); white-space: nowrap; margin-top: 1px; }
+.week-text { font-size: 13px; color: var(--color-text-primary); line-height: 1.6; }
+.section-title { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); margin: 16px 0 8px; letter-spacing: 0.3px; }
+</style>
+
+<h2 class="sr-only">育儿规则执行系统——四步流程与冲突应对脚本</h2>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('steps')">四步流程</button>
+  <button class="tab" onclick="switchTab('scripts')">冲突脚本</button>
+  <button class="tab" onclick="switchTab('scenarios')">场景对话</button>
+</div>
+
+<div id="steps" class="page active">
+  <div class="anchor-card">
+    <div class="anchor-text">「我不是在说服他，<br>我是在维持系统。」</div>
+    <div class="anchor-sub">冲突前记住这一句</div>
+  </div>
+
+  <!-- Step 1 -->
+  <div class="step-card">
+    <div class="step-header" onclick="toggleStep(this)">
+      <div class="step-num" style="background:#E6F1FB; color:#185FA5;">①</div>
+      <div>
+        <div class="step-title">给规则</div>
+        <div class="step-sub">简短 · 清晰 · 说一次</div>
+      </div>
+      <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+    </div>
+    <div class="step-body">
+      <div class="do">
+        <div class="label">✔ 正确示范</div>
+        <div class="item">· 「这道题步骤必须写完整，不写步骤不算完成。」</div>
+        <div class="item">· 「lesson结束后，你来回答我2个问题。」</div>
+        <div class="item">· 「8:30之前把第一段背给我听。」</div>
+      </div>
+      <div class="dont">
+        <div class="label">✗ 禁止</div>
+        <div class="item">· 超过3句话的长篇讲道理</div>
+        <div class="item">· 叹气、皱眉、提高音量</div>
+        <div class="item">· 翻旧账「上次你也是这样…」</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step-card">
+    <div class="step-header" onclick="toggleStep(this)">
+      <div class="step-num" style="background:#EAF3DE; color:#3B6D11;">②</div>
+      <div>
+        <div class="step-title">给时间</div>
+        <div class="step-sub">具体时间点，不是「快点」</div>
+      </div>
+      <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+    </div>
+    <div class="step-body">
+      <div class="example-box">
+        <div class="label">模板句式</div>
+        「现在7:50，8:10之前完成。」<br>
+        「你有20分钟，8:30截止。」
+      </div>
+      <div class="dont">
+        <div class="label">✗ 说完后立刻做到</div>
+        <div class="item">· 停止提醒</div>
+        <div class="item">· 离开，去做别的事</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step-card">
+    <div class="step-header" onclick="toggleStep(this)">
+      <div class="step-num" style="background:#FAEEDA; color:#854F0B;">③</div>
+      <div>
+        <div class="step-title">给后果</div>
+        <div class="step-sub">真实可执行，不是吓唬</div>
+      </div>
+      <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+    </div>
+    <div class="step-body">
+      <div class="example-box">
+        <div class="label">不写数学步骤</div>
+        「这题不算完成，今天数学任务没达标。」
+      </div>
+      <div class="example-box">
+        <div class="label">不回答英语问题</div>
+        「今天不进入下一个lesson，明天补上。」
+      </div>
+      <div class="example-box">
+        <div class="label">背诵没准备好</div>
+        「好的，那明天自己面对老师抽查。」
+      </div>
+      <div class="example-box">
+        <div class="label">时间到了还没做</div>
+        「今晚自由时间减少30分钟，明天重新做。」
+      </div>
+      <div class="example-box">
+        <div class="label">完全拒绝执行</div>
+        「我不跟你争，后果是……我们明天再谈。」
+      </div>
+      <div class="dont">
+        <div class="label">✗ 后果说完后</div>
+        <div class="item">· 不补充「你看你就是…」</div>
+        <div class="item">· 不追加任何教育</div>
+        <div class="item">· 说完走人，让后果自己说话</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 4 -->
+  <div class="step-card">
+    <div class="step-header" onclick="toggleStep(this)">
+      <div class="step-num" style="background:#FBEAF0; color:#993556;">④</div>
+      <div>
+        <div class="step-title">退出情绪</div>
+        <div class="step-sub">核心步骤 — 真正离开</div>
+      </div>
+      <i class="ti ti-chevron-down chevron" aria-hidden="true"></i>
+    </div>
+    <div class="step-body">
+      <div class="do">
+        <div class="label">✔ 去做这些</div>
+        <div class="item">· 看书、做家务、休息</div>
+        <div class="item">· 不站在旁边盯</div>
+        <div class="item">· 不继续输出任何教育语言</div>
+      </div>
+      <div class="dont">
+        <div class="label">✗ 禁止</div>
+        <div class="item">· 连续提醒</div>
+        <div class="item">· 情绪跟随（孩子叹气你也叹气）</div>
+        <div class="item">· 说「最后一句话」</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="scripts" class="page">
+  <div class="anchor-card">
+    <div class="anchor-text">「我不赢每一次对抗，<br>我只保证规则不消失。」</div>
+  </div>
+
+  <div class="section-title">对抗时的四句核心口诀</div>
+  <div style="display: flex; flex-wrap: wrap; margin-bottom: 16px;">
+    <span class="rule-pill">规则只说一次</span>
+    <span class="rule-pill">对抗只重复规则</span>
+    <span class="rule-pill">不升级情绪</span>
+    <span class="rule-pill">后果自然发生</span>
+  </div>
+
+  <div class="section-title">分阶段脚本</div>
+
+  <div class="script-item">
+    <div class="script-phase">第一句：给规则（只说一次）</div>
+    <div class="speech parent-s">「我们按规则来：现在开始做这一步。」</div>
+    <div class="speech parent-s" style="margin-top:6px;">「规则是这一题要写步骤。」</div>
+    <div class="script-note">说完停止，不解释，不加内容。</div>
+  </div>
+
+  <div class="script-item">
+    <div class="script-phase">孩子顶嘴/不动：卡住阶段（重复同一句）</div>
+    <div style="margin-bottom:6px;">
+      <div class="who child">孩子说任何抵抗的话</div>
+      <div class="speech child-s">「我不想做」「太烦了」「我已经会了」</div>
+    </div>
+    <div>
+      <div class="who parent">你只重复这一句，原文不变</div>
+      <div class="speech parent-s">「规则是这一题要写步骤。」</div>
+    </div>
+    <div class="script-note">禁止：讲道理、比较、解释未来、提旧问题。</div>
+  </div>
+
+  <div class="script-item">
+    <div class="script-phase">继续对抗：刹车点（最关键）</div>
+    <div class="speech parent-s">「你可以慢慢做，但这条规则不会变。」</div>
+    <div class="script-note">说完，转身离开。不等回应，不看反应。</div>
+  </div>
+
+  <div class="script-item">
+    <div class="script-phase">完全不做：执行后果</div>
+    <div class="speech parent-s">「这题不算完成，今天数学任务没达标。」</div>
+    <div class="speech parent-s" style="margin-top:6px;">「今天这一部分到这里结束。」</div>
+    <div class="speech parent-s" style="margin-top:6px;">「明天继续这一题。」</div>
+    <div class="script-note">说一句，结束，走人。不延长冲突。</div>
+  </div>
+
+  <div class="section-title" style="margin-top: 20px;">规则会稳定的时间线</div>
+  <div class="progress-section">
+    <div class="week-row">
+      <div class="week-badge">第1–2周</div>
+      <div class="week-text">孩子试探增多。正常——他在测试规则是否稳定，保持不变即可。</div>
+    </div>
+    <div class="week-row">
+      <div class="week-badge">第3–6周</div>
+      <div class="week-text">试探开始减少。他开始接受规则不会被拉扯，对抗频率下降。</div>
+    </div>
+    <div class="week-row" style="margin-bottom:0">
+      <div class="week-badge">2–3个月</div>
+      <div class="week-text">开始适应稳定规则。不是变乖了，是建立了预期——他知道规则会在。</div>
+    </div>
+  </div>
+</div>
+
+<div id="scenarios" class="page">
+  <div class="section-title" style="margin-top: 0;">点击查看完整对话示范</div>
+
+  <button class="scenario-btn" onclick="toggleScenario(this)">
+    <div>
+      <div class="scenario-title">📐 数学不写步骤</div>
+      <div style="font-size:12px; color: var(--color-text-secondary); margin-top:2px;">四步完整流程示范</div>
+    </div>
+    <i class="ti ti-chevron-down" style="font-size:16px; color: var(--color-text-tertiary);" aria-hidden="true"></i>
+  </button>
+  <div class="scenario-body">
+    <div class="dialogue">
+      <div class="who parent">家长（给规则）</div>
+      <div class="speech parent-s">「这道题步骤必须写完整，只写答案不算完成。」</div>
+    </div>
+    <div class="dialogue">
+      <div class="who parent">家长（给时间）</div>
+      <div class="speech parent-s">「现在8:00，8:20之前完成。」</div>
+    </div>
+    <div style="text-align:center; font-size:12px; color: var(--color-text-secondary); padding: 8px 0;">— 家长离开，去做自己的事 —</div>
+    <div class="dialogue">
+      <div class="who child">孩子</div>
+      <div class="speech child-s">「我不想写步骤，没意义。」</div>
+    </div>
+    <div class="dialogue">
+      <div class="who parent">家长（执行后果，平静说）</div>
+      <div class="speech parent-s">「好的，那这题不算完成，今天数学任务没达标。」</div>
+    </div>
+    <div style="background:#EEEDFE; border-radius: var(--border-radius-md); padding: 8px 10px; font-size:12px; color:#534AB7; margin-top:6px;">说完后果，结束，走人。不追加任何话。</div>
+  </div>
+
+  <button class="scenario-btn" onclick="toggleScenario(this)">
+    <div>
+      <div class="scenario-title">📖 英语不回答问题</div>
+      <div style="font-size:12px; color: var(--color-text-secondary); margin-top:2px;">含正向反馈示范</div>
+    </div>
+    <i class="ti ti-chevron-down" style="font-size:16px; color: var(--color-text-tertiary);" aria-hidden="true"></i>
+  </button>
+  <div class="scenario-body">
+    <div class="dialogue">
+      <div class="who parent">家长</div>
+      <div class="speech parent-s">「Lesson结束后，你来回答我2个问题。现在8:15，8:30之前完成。」</div>
+    </div>
+    <div style="text-align:center; font-size:12px; color: var(--color-text-secondary); padding: 8px 0;">— 家长离开 —</div>
+    <div class="dialogue">
+      <div class="who parent">孩子完成后，家长</div>
+      <div class="speech parent-s">「好，说说你读到了什么？」</div>
+    </div>
+    <div class="dialogue">
+      <div class="who child">孩子回答后</div>
+    </div>
+    <div class="dialogue">
+      <div class="who parent">家长（正向反馈）</div>
+      <div class="speech parent-s">「嗯，记住了。明天继续。」</div>
+    </div>
+    <div style="background:#EAF3DE; border-radius: var(--border-radius-md); padding: 8px 10px; font-size:12px; color:#3B6D11; margin-top:6px;">简短认可，不夸大，不扩展。</div>
+  </div>
+
+  <button class="scenario-btn" onclick="toggleScenario(this)">
+    <div>
+      <div class="scenario-title">🔁 孩子持续对抗</div>
+      <div style="font-size:12px; color: var(--color-text-secondary); margin-top:2px;">三轮顶嘴应对</div>
+    </div>
+    <i class="ti ti-chevron-down" style="font-size:16px; color: var(--color-text-tertiary);" aria-hidden="true"></i>
+  </button>
+  <div class="scenario-body">
+    <div class="dialogue">
+      <div class="who parent">家长</div>
+      <div class="speech parent-s">「规则是这一题要写步骤。」</div>
+    </div>
+    <div class="dialogue">
+      <div class="who child">孩子</div>
+      <div class="speech child-s">「我不想做。」</div>
+    </div>
+    <div class="dialogue">
+      <div class="who parent">家长（重复，原文不变）</div>
+      <div class="speech parent-s">「规则是这一题要写步骤。」</div>
+    </div>
+    <div class="dialogue">
+      <div class="who child">孩子</div>
+      <div class="speech child-s">「太烦了！」</div>
+    </div>
+    <div class="dialogue">
+      <div class="who parent">家长（重复，原文不变）</div>
+      <div class="speech parent-s">「规则是这一题要写步骤。」</div>
+    </div>
+    <div class="dialogue">
+      <div class="who child">孩子</div>
+      <div class="speech child-s">「我已经会了！」</div>
+    </div>
+    <div class="dialogue">
+      <div class="who parent">家长（刹车点）</div>
+      <div class="speech parent-s">「你可以慢慢做，但这条规则不会变。」</div>
+    </div>
+    <div style="text-align:center; font-size:12px; color: var(--color-text-secondary); padding: 8px 0;">— 转身离开，不等回应 —</div>
+  </div>
+</div>
+
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    t.classList.toggle('active', ['steps','scripts','scenarios'][i] === id);
+  });
+  document.querySelectorAll('.page').forEach(p => {
+    p.classList.toggle('active', p.id === id);
+  });
+}
+
+function toggleStep(header) {
+  const body = header.nextElementSibling;
+  const isOpen = body.classList.contains('open');
+  document.querySelectorAll('.step-body').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.chevron').forEach(c => c.style.transform = '');
+  if (!isOpen) {
+    body.classList.add('open');
+    header.querySelector('.chevron').style.transform = 'rotate(180deg)';
+  }
+}
+
+function toggleScenario(btn) {
+  const body = btn.nextElementSibling;
+  const isOpen = body.classList.contains('open');
+  document.querySelectorAll('.scenario-body').forEach(b => b.classList.remove('open'));
+  if (!isOpen) body.classList.add('open');
+}
+</script>
